@@ -8,7 +8,7 @@ export default class ExampleComponent extends Component {
     text: PropTypes.string
   }
 
-  render() {
+  render () {
     const {
       text
     } = this.props

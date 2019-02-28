@@ -1,0 +1,8 @@
+{
+  "short_name": "react-maisonette-slider",
+  "name": "react-maisonette-slider",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

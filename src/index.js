@@ -8,15 +8,15 @@ import PropTypes from 'prop-types'
  */
 const mergeSettings = (options) => {
   const settings = {
+    draggable: true,
     duration: 200,
     easing: 'ease-out',
-    perPage: 1,
-    startIndex: 0,
-    draggable: true,
-    multipleDrag: true,
-    threshold: 20,
     loop: false,
+    multipleDrag: true,
+    perPage: 1,
     rtl: false,
+    startIndex: 0,
+    threshold: 20,
     onInit: () => {},
     onChange: () => {}
   }

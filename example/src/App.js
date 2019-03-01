@@ -1,8 +1,18 @@
 import React, { Component } from 'react'
 
-import ExampleComponent from 'react-maisonette-slider'
+import MainCarousel from 'react-maisonette-slider'
 
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.carousel = React.createRef();
+  }
+
+  componentDidMount() {
+    console.log(this.carousel)
+  }
+
   render () {
     const options = {
       perPage: {
@@ -15,12 +25,15 @@ export default class App extends Component {
 
     return (
       <div>
-        <ExampleComponent options={options}>
-          <div><img src='https://pawelgrzybek.com/siema/assets/siema--pink.svg' alt='Siema' /></div>
-          <div><img src='https://pawelgrzybek.com/siema/assets/siema--yellow.svg' alt='Siema' /></div>
-          <div><img src='https://pawelgrzybek.com/siema/assets/siema--pink.svg' alt='Siema' /></div>
-          <div><img src='https://pawelgrzybek.com/siema/assets/siema--yellow.svg' alt='Siema' /></div>
-        </ExampleComponent>
+        <MainCarousel ref={(node) => { this.carousel = node }} options={options}>
+          <div><img src='https://pawelgrzybek.com/siema/assets/siema--pink.svg' alt='Picsum' /></div>
+          <div><img src='https://pawelgrzybek.com/siema/assets/siema--yellow.svg' alt='Picsum' /></div>
+          <div><img src='https://pawelgrzybek.com/siema/assets/siema--pink.svg' alt='Picsum' /></div>
+          <div><img src='https://pawelgrzybek.com/siema/assets/siema--yellow.svg' alt='Picsum' /></div>
+        </MainCarousel>
+
+        <button type="button" onClick={() => { this.carousel.prev() }}>Prev</button>
+        <button type="button" onClick={() => { this.carousel.next() }}>Next</button>
       </div>
     )
   }

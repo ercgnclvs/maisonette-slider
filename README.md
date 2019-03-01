@@ -15,12 +15,23 @@ npm install --save react-maisonette-slider
 ```jsx
 import React, { Component } from 'react'
 
-import MyComponent from 'react-maisonette-slider'
+import Carousel from 'maisonette-slider'
 
 class Example extends Component {
   render () {
     return (
-      <MyComponent />
+      <Carousel>
+        <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=0" alt="0" /></div>
+        <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=1" alt="1" /></div>
+        <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=2" alt="2" /></div>
+        <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=3" alt="3" /></div>
+        <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=4" alt="4" /></div>
+        <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=5" alt="5" /></div>
+        <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=6" alt="6" /></div>
+        <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=7" alt="7" /></div>
+        <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=8" alt="8" /></div>
+        <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=9" alt="9" /></div>
+      </Carousel>
     )
   }
 }

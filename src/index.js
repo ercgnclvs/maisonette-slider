@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 /**
  * Overrides default settings with custom ones.
  * @param {Object} options - Optional settings object.
- * @returns {Object} - Custom Siema settings.
+ * @returns {Object} - Custom settings.
  */
 const mergeSettings = (options) => {
   const settings = {
@@ -18,7 +18,8 @@ const mergeSettings = (options) => {
     startIndex: 0,
     threshold: 20,
     onInit: () => {},
-    onChange: () => {}
+    onChange: () => {},
+    onClick: () => {}
   }
 
   const userSttings = options
@@ -57,14 +58,14 @@ class Carousel extends Component {
 
   componentDidMount () {
     // Resolve selector
-    this.selector = this.carousel.current
+    this.carousel = this.carousel.current
 
     // update perPage number dependable of user value
     this.resolveSlidesNumber()
 
     // Create global references
-    this.selectorWidth = this.selector.offsetWidth
-    this.innerElements = [].slice.call(this.selector.children)
+    this.carouselWidth = this.carousel.offsetWidth
+    this.innerElements = [].slice.call(this.carousel.children)
     this.currentSlide = this.state.config.loop
       ? this.state.config.startIndex % this.innerElements.length
       : Math.max(
@@ -72,6 +73,7 @@ class Carousel extends Component {
         Math.min(this.state.config.startIndex, this.innerElements.length - this.perPage)
       )
     this.transformProperty = webkitOrNot()
+    this.allowItemClick = true
 
     // Bind all event handlers for referencability
     const handlers = [
@@ -83,7 +85,8 @@ class Carousel extends Component {
       'mouseupHandler',
       'mouseleaveHandler',
       'mousemoveHandler',
-      'clickHandler'
+      'clickHandler',
+      'itemClickHandler'
     ]
     handlers.forEach(method => {
       this[method] = this[method].bind(this)
@@ -113,18 +116,18 @@ class Carousel extends Component {
       }
 
       // Touch events
-      this.selector.addEventListener('touchstart', this.touchstartHandler)
-      this.selector.addEventListener('touchend', this.touchendHandler)
-      this.selector.addEventListener('touchmove', this.touchmoveHandler)
+      this.carousel.addEventListener('touchstart', this.touchstartHandler)
+      this.carousel.addEventListener('touchend', this.touchendHandler)
+      this.carousel.addEventListener('touchmove', this.touchmoveHandler)
 
       // Mouse events
-      this.selector.addEventListener('mousedown', this.mousedownHandler)
-      this.selector.addEventListener('mouseup', this.mouseupHandler)
-      this.selector.addEventListener('mouseleave', this.mouseleaveHandler)
-      this.selector.addEventListener('mousemove', this.mousemoveHandler)
+      this.carousel.addEventListener('mousedown', this.mousedownHandler)
+      this.carousel.addEventListener('mouseup', this.mouseupHandler)
+      this.carousel.addEventListener('mouseleave', this.mouseleaveHandler)
+      this.carousel.addEventListener('mousemove', this.mousemoveHandler)
 
       // Click
-      this.selector.addEventListener('click', this.clickHandler)
+      this.carousel.addEventListener('click', this.clickHandler)
     }
   }
 
@@ -133,14 +136,14 @@ class Carousel extends Component {
    */
   detachEvents () {
     window.removeEventListener('resize', this.resizeHandler)
-    this.selector.removeEventListener('touchstart', this.touchstartHandler)
-    this.selector.removeEventListener('touchend', this.touchendHandler)
-    this.selector.removeEventListener('touchmove', this.touchmoveHandler)
-    this.selector.removeEventListener('mousedown', this.mousedownHandler)
-    this.selector.removeEventListener('mouseup', this.mouseupHandler)
-    this.selector.removeEventListener('mouseleave', this.mouseleaveHandler)
-    this.selector.removeEventListener('mousemove', this.mousemoveHandler)
-    this.selector.removeEventListener('click', this.clickHandler)
+    this.carousel.removeEventListener('touchstart', this.touchstartHandler)
+    this.carousel.removeEventListener('touchend', this.touchendHandler)
+    this.carousel.removeEventListener('touchmove', this.touchmoveHandler)
+    this.carousel.removeEventListener('mousedown', this.mousedownHandler)
+    this.carousel.removeEventListener('mouseup', this.mouseupHandler)
+    this.carousel.removeEventListener('mouseleave', this.mouseleaveHandler)
+    this.carousel.removeEventListener('mousemove', this.mousemoveHandler)
+    this.carousel.removeEventListener('click', this.clickHandler)
   }
 
   /**
@@ -150,10 +153,10 @@ class Carousel extends Component {
     this.attachEvents()
 
     // hide everything out of selector's boundaries
-    this.selector.style.overflow = 'hidden'
+    this.carousel.style.overflow = 'hidden'
 
     // rtl or ltr
-    this.selector.style.direction = this.state.config.rtl ? 'rtl' : 'ltr'
+    this.carousel.style.direction = this.state.config.rtl ? 'rtl' : 'ltr'
 
     // build a frame and slide to a currentSlide
     this.buildSliderFrame()
@@ -165,7 +168,7 @@ class Carousel extends Component {
    * Build a sliderFrame and slide to a current item.
    */
   buildSliderFrame () {
-    const widthItem = this.selectorWidth / this.perPage
+    const widthItem = this.carouselWidth / this.perPage
     const itemsToBuild = this.state.config.loop ? this.innerElements.length + (2 * this.perPage) : this.innerElements.length
 
     // Create frame and apply styling
@@ -174,7 +177,7 @@ class Carousel extends Component {
     this.enableTransition()
 
     if (this.state.config.draggable) {
-      this.selector.style.cursor = '-webkit-grab'
+      this.carousel.style.cursor = '-webkit-grab'
     }
 
     // Create a document fragment to put slides into it
@@ -202,8 +205,8 @@ class Carousel extends Component {
     this.sliderFrame.appendChild(docFragment)
 
     // Clear selector (just in case something is there) and insert a frame
-    this.selector.innerHTML = ''
-    this.selector.appendChild(this.sliderFrame)
+    this.carousel.innerHTML = ''
+    this.carousel.appendChild(this.sliderFrame)
 
     // Go to currently active slide after initial build
     this.slideToCurrent()
@@ -215,6 +218,7 @@ class Carousel extends Component {
     elementContainer.style.float = this.state.config.rtl ? 'right' : 'left'
     elementContainer.style.width = `${this.state.config.loop ? 100 / (this.innerElements.length + (this.perPage * 2)) : 100 / (this.innerElements.length)}%`
     elementContainer.appendChild(elm)
+    elementContainer.addEventListener('click', this.itemClickHandler)
     return elementContainer
   }
 
@@ -255,7 +259,7 @@ class Carousel extends Component {
         const mirrorSlideIndex = this.currentSlide + this.innerElements.length
         const mirrorSlideIndexOffset = this.perPage
         const moveTo = mirrorSlideIndex + mirrorSlideIndexOffset
-        const offset = (this.state.config.rtl ? 1 : -1) * moveTo * (this.selectorWidth / this.perPage)
+        const offset = (this.state.config.rtl ? 1 : -1) * moveTo * (this.carouselWidth / this.perPage)
         const dragDistance = this.state.config.draggable ? this.drag.endX - this.drag.startX : 0
 
         this.sliderFrame.style[this.transformProperty] = `translate3d(${offset + dragDistance}px, 0, 0)`
@@ -297,7 +301,7 @@ class Carousel extends Component {
         const mirrorSlideIndex = this.currentSlide - this.innerElements.length
         const mirrorSlideIndexOffset = this.perPage
         const moveTo = mirrorSlideIndex + mirrorSlideIndexOffset
-        const offset = (this.state.config.rtl ? 1 : -1) * moveTo * (this.selectorWidth / this.perPage)
+        const offset = (this.state.config.rtl ? 1 : -1) * moveTo * (this.carouselWidth / this.perPage)
         const dragDistance = this.state.config.draggable ? this.drag.endX - this.drag.startX : 0
 
         this.sliderFrame.style[this.transformProperty] = `translate3d(${offset + dragDistance}px, 0, 0)`
@@ -360,7 +364,7 @@ class Carousel extends Component {
    */
   slideToCurrent (enableTransition) {
     const currentSlide = this.state.config.loop ? this.currentSlide + this.perPage : this.currentSlide
-    const offset = (this.state.config.rtl ? 1 : -1) * currentSlide * (this.selectorWidth / this.perPage)
+    const offset = (this.state.config.rtl ? 1 : -1) * currentSlide * (this.carouselWidth / this.perPage)
 
     if (enableTransition) {
       // This one is tricky, I know but this is a perfect explanation:
@@ -382,7 +386,7 @@ class Carousel extends Component {
   updateAfterDrag () {
     const movement = (this.state.config.rtl ? -1 : 1) * (this.drag.endX - this.drag.startX)
     const movementDistance = Math.abs(movement)
-    const howManySliderToSlide = this.state.config.multipleDrag ? Math.ceil(movementDistance / (this.selectorWidth / this.perPage)) : 1
+    const howManySliderToSlide = this.state.config.multipleDrag ? Math.ceil(movementDistance / (this.carouselWidth / this.perPage)) : 1
 
     const slideToNegativeClone = movement > 0 && this.currentSlide - howManySliderToSlide < 0
     const slideToPositiveClone = movement < 0 && this.currentSlide + howManySliderToSlide > this.innerElements.length - this.perPage
@@ -408,7 +412,7 @@ class Carousel extends Component {
       this.currentSlide = this.innerElements.length <= this.perPage ? 0 : this.innerElements.length - this.perPage
     }
 
-    this.selectorWidth = this.selector.offsetWidth
+    this.carouselWidth = this.carousel.offsetWidth
 
     this.buildSliderFrame()
   }
@@ -431,8 +435,8 @@ class Carousel extends Component {
    */
   touchstartHandler (e) {
     // Prevent dragging / swiping on inputs, selects and textareas
-    const ignoreSiema = ['TEXTAREA', 'OPTION', 'INPUT', 'SELECT'].indexOf(e.target.nodeName) !== -1
-    if (ignoreSiema) {
+    const ignore = ['TEXTAREA', 'OPTION', 'INPUT', 'SELECT'].indexOf(e.target.nodeName) !== -1
+    if (ignore) {
       return
     }
 
@@ -472,7 +476,7 @@ class Carousel extends Component {
       this.sliderFrame.style.transition = `all 0ms ${this.state.config.easing}`
 
       const currentSlide = this.state.config.loop ? this.currentSlide + this.perPage : this.currentSlide
-      const currentOffset = currentSlide * (this.selectorWidth / this.perPage)
+      const currentOffset = currentSlide * (this.carouselWidth / this.perPage)
       const dragOffset = (this.drag.endX - this.drag.startX)
       const offset = this.state.config.rtl ? currentOffset + dragOffset : currentOffset - dragOffset
       this.sliderFrame.style[this.transformProperty] = `translate3d(${(this.state.config.rtl ? 1 : -1) * offset}px, 0, 0)`
@@ -484,8 +488,8 @@ class Carousel extends Component {
    */
   mousedownHandler (e) {
     // Prevent dragging / swiping on inputs, selects and textareas
-    const ignoreSiema = ['TEXTAREA', 'OPTION', 'INPUT', 'SELECT'].indexOf(e.target.nodeName) !== -1
-    if (ignoreSiema) {
+    const ignore = ['TEXTAREA', 'OPTION', 'INPUT', 'SELECT'].indexOf(e.target.nodeName) !== -1
+    if (ignore) {
       return
     }
 
@@ -501,7 +505,7 @@ class Carousel extends Component {
   mouseupHandler (e) {
     e.stopPropagation()
     this.pointerDown = false
-    this.selector.style.cursor = '-webkit-grab'
+    this.carousel.style.cursor = '-webkit-grab'
     this.enableTransition()
     if (this.drag.endX) {
       this.updateAfterDrag()
@@ -522,13 +526,15 @@ class Carousel extends Component {
         this.drag.preventClick = true
       }
 
+      this.allowItemClick = false
+
       this.drag.endX = e.pageX
-      this.selector.style.cursor = '-webkit-grabbing'
+      this.carousel.style.cursor = '-webkit-grabbing'
       this.sliderFrame.style.webkitTransition = `all 0ms ${this.state.config.easing}`
       this.sliderFrame.style.transition = `all 0ms ${this.state.config.easing}`
 
       const currentSlide = this.state.config.loop ? this.currentSlide + this.perPage : this.currentSlide
-      const currentOffset = currentSlide * (this.selectorWidth / this.perPage)
+      const currentOffset = currentSlide * (this.carouselWidth / this.perPage)
       const dragOffset = (this.drag.endX - this.drag.startX)
       const offset = this.state.config.rtl ? currentOffset + dragOffset : currentOffset - dragOffset
       this.sliderFrame.style[this.transformProperty] = `translate3d(${(this.state.config.rtl ? 1 : -1) * offset}px, 0, 0)`
@@ -541,7 +547,7 @@ class Carousel extends Component {
   mouseleaveHandler (e) {
     if (this.pointerDown) {
       this.pointerDown = false
-      this.selector.style.cursor = '-webkit-grab'
+      this.carousel.style.cursor = '-webkit-grab'
       this.drag.endX = e.pageX
       this.drag.preventClick = false
       this.enableTransition()
@@ -560,6 +566,18 @@ class Carousel extends Component {
       e.preventDefault()
     }
     this.drag.preventClick = false
+  }
+
+  /**
+   * carousel item click event handler
+   */
+  itemClickHandler (e) {
+    if (this.allowItemClick) {
+      const clickedSlide = [...this.sliderFrame.children].indexOf(e.currentTarget)
+      this.state.config.onClick.call(this, clickedSlide)
+    }
+
+    this.allowItemClick = true
   }
 
   /**
@@ -652,16 +670,16 @@ class Carousel extends Component {
   destroy (restoreMarkup = false, callback) {
     this.detachEvents()
 
-    this.selector.style.cursor = 'auto'
+    this.carousel.style.cursor = 'auto'
 
     if (restoreMarkup) {
       const slides = document.createDocumentFragment()
       for (let i = 0; i < this.innerElements.length; i++) {
         slides.appendChild(this.innerElements[i])
       }
-      this.selector.innerHTML = ''
-      this.selector.appendChild(slides)
-      this.selector.removeAttribute('style')
+      this.carousel.innerHTML = ''
+      this.carousel.appendChild(slides)
+      this.carousel.removeAttribute('style')
     }
 
     if (callback) {
@@ -670,8 +688,6 @@ class Carousel extends Component {
   }
 
   render () {
-    console.log(this.state.config)
-
     return (
       <div ref={this.carousel}>
         {this.props.children}

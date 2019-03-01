@@ -26,6 +26,7 @@ export default class App extends Component {
   render () {
     const mainCarouselOptions = {
       perPage: {
+        0: 1,
         768: 3,
         1024: 4
       },
@@ -55,6 +56,7 @@ export default class App extends Component {
 
     const navigationCarouselOptions = {
       perPage: {
+        0: 4,
         768: 6,
         1024: 8
       },

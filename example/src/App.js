@@ -11,11 +11,23 @@ export default class App extends Component {
     this.navigationCarousel = React.createRef();
   }
 
+  componentDidMount() {
+    // set inital 'is-active' slides
+    const mainOffsetSlide = this.mainCarousel.currentSlide + this.mainCarousel.perPage - 1
+    this.navigationCarousel.innerElements.forEach(slide => {
+      slide.classList.remove('is-active');
+      const index = this.navigationCarousel.innerElements.indexOf(slide);
+      if (index <= mainOffsetSlide && index >= this.mainCarousel.currentSlide) {
+        slide.classList.add('is-active');
+      }
+    });
+  }
+
   render () {
     const mainCarouselOptions = {
       perPage: {
-        768: 2,
-        1024: 3
+        768: 3,
+        1024: 4
       },
       multipleDrag: false,
       onChange: () => {
@@ -29,6 +41,15 @@ export default class App extends Component {
         if (this.mainCarousel.currentSlide < this.navigationCarousel.currentSlide) {
           this.navigationCarousel.goTo(this.mainCarousel.currentSlide)
         }
+
+        // set 'is-active' class on navigation carousel
+        this.navigationCarousel.innerElements.forEach(slide => {
+          slide.classList.remove('is-active');
+          const index = this.navigationCarousel.innerElements.indexOf(slide);
+          if (index <= mainOffsetSlide && index >= this.mainCarousel.currentSlide) {
+            slide.classList.add('is-active');
+          }
+        });
       }
     }
 
@@ -62,16 +83,16 @@ export default class App extends Component {
         <button type="button" onClick={() => { this.mainCarousel.next() }}>Next</button>
 
         <NavigationCarousel ref={(node) => { this.navigationCarousel = node }} options={navigationCarouselOptions}>
-          <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=0" alt="0" /></div>
-          <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=1" alt="1" /></div>
-          <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=2" alt="2" /></div>
-          <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=3" alt="3" /></div>
-          <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=4" alt="4" /></div>
-          <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=5" alt="5" /></div>
-          <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=6" alt="6" /></div>
-          <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=7" alt="7" /></div>
-          <div><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=8" alt="8" /></div>
-          <div><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=9" alt="9" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=0" alt="0" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=1" alt="1" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=2" alt="2" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=3" alt="3" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=4" alt="4" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=5" alt="5" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=6" alt="6" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=7" alt="7" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/ffaeb0/ffffff?text=8" alt="8" /></div>
+          <div className='slide'><img src="https://fakeimg.pl/350x200/fdffa8/201f15?text=9" alt="9" /></div>
         </NavigationCarousel>
       </div>
     )

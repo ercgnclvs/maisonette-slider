@@ -8,3 +8,12 @@ img {
   width: 100%;
   display: block;
 }
+
+.slide {
+  position: relative;
+  opacity: 0.25;
+}
+
+.slide.is-active {
+  opacity: 1;
+}

@@ -17,7 +17,19 @@ export default class App extends Component {
         768: 2,
         1024: 3
       },
-      multipleDrag: false
+      multipleDrag: false,
+      onChange: () => {
+        const mainOffsetSlide = this.mainCarousel.currentSlide + this.mainCarousel.perPage - 1
+        const navigationOffsetSlide = this.navigationCarousel.currentSlide + this.navigationCarousel.perPage - 1
+        if (mainOffsetSlide > navigationOffsetSlide) {
+          const slide = this.mainCarousel.currentSlide + this.mainCarousel.perPage - this.navigationCarousel.perPage;
+          this.navigationCarousel.goTo(slide)
+        }
+
+        if (this.mainCarousel.currentSlide < this.navigationCarousel.currentSlide) {
+          this.navigationCarousel.goTo(this.mainCarousel.currentSlide)
+        }
+      }
     }
 
     const navigationCarouselOptions = {

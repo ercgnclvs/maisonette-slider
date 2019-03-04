@@ -1,4 +1,4 @@
-# react-maisonette-slider
+# maisonette-slider
 
 > 
 

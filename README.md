@@ -28,7 +28,7 @@ import Carousel from 'maisonette-slider'
 Siema comes with a few (optional) settings that you can change by passing an object as an argument. Default values are presented below.
 
 ```js
-new Siema({
+const options = {
   draggable: true,
   duration: 200,
   easing: 'ease-out',
@@ -41,7 +41,7 @@ new Siema({
   onInit: () => {},
   onClick: () => {},
   onChange: () => {}
-});
+};
 ```
 
 **`duration`** (number)  

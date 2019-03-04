@@ -25,7 +25,7 @@ import Carousel from 'maisonette-slider'
 
 ## Options
 
-Siema comes with a few (optional) settings that you can change by passing an object as an argument. Default values are presented below.
+Default values are presented below.
 
 ```js
 const options = {
@@ -81,8 +81,6 @@ Runs after slide change.
 Runs on slide click.
 
 ## API
-
-As mentioned above, Siema doesn't come with many options - just a few useful methods. Combine it with some very basic JavaScript and voila!
 
 **`prev(howManySlides = 1, callback)`**  
 Go to previous item. Optionally slide few items backward by passing `howManySlides` (number) argument. Optional `callback` (function) available as a third argument .

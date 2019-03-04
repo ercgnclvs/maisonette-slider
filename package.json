@@ -1,10 +1,10 @@
 {
-  "name": "react-maisonette-slider",
+  "name": "maisonette-slider",
   "version": "1.0.0",
   "description": "",
   "author": "ercgnclvs",
   "license": "MIT",
-  "repository": "ercgnclvs/react-maisonette-slider",
+  "repository": "ercgnclvs/maisonette-slider",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",

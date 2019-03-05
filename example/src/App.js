@@ -25,6 +25,7 @@ export default class App extends Component {
 
   render () {
     const mainCarouselOptions = {
+      dots: true,
       perPage: {
         0: 1,
         768: 3,

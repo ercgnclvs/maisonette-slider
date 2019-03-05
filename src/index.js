@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
  */
 const mergeSettings = (options) => {
   const settings = {
+    dots: false,
     draggable: true,
     duration: 200,
     easing: 'ease-out',
@@ -160,6 +161,11 @@ class Carousel extends Component {
 
     // build a frame and slide to a currentSlide
     this.buildSliderFrame()
+
+    // add pagination dots if dots: true
+    if (this.state.config.dots) {
+      this.addPagination()
+    }
 
     this.state.config.onInit.call(this)
   }
@@ -566,6 +572,28 @@ class Carousel extends Component {
       e.preventDefault()
     }
     this.drag.preventClick = false
+  }
+
+  /**
+   * click event handler
+   */
+  addPagination () {
+    // create a div to encapsulate all buttons
+    // and give it a class nav
+    const navDiv = document.createElement('nav')
+
+    // check how many items we have inside a carousel
+    // and create that many buttons and apend them to nav div
+    // add a listened event to each of them to navigate to prticular slide
+    for (let i = 0; i < this.innerElements.length; i++) {
+      const btn = document.createElement('button')
+      btn.textContent = i
+      btn.addEventListener('click', () => this.goTo(i))
+      navDiv.appendChild(btn)
+    }
+
+    // place the nav div after siema markup
+    this.carousel.parentNode.insertBefore(navDiv, this.carousel.nextSibling)
   }
 
   /**
